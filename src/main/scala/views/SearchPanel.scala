@@ -1,11 +1,12 @@
 package views
 
-import scala.swing.{Button, Panel, TextField}
+import scala.swing.{BorderPanel, TextField}
+import scala.swing.BorderPanel.Position._
 
-class SearchPanel extends Panel{
+class SearchPanel extends BorderPanel{
 
   val textField = new TextField()
 
-  private val myContents = (new Content += new Button())
-  override def contents = myContents
+  layout(textField) = Center
+
 }
