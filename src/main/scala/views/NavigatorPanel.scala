@@ -1,9 +1,10 @@
 package views
 
 import java.awt.Color
-import javax.swing.JPanel
 
-class NavigatorPanel extends JPanel{
+import scala.swing.Panel
 
-  setBackground(Color.RED)
+class NavigatorPanel extends Panel{
+
+  background = Color.RED
 }

@@ -1,11 +1,13 @@
 package frames
 
-import java.awt.{BorderLayout, Toolkit}
-import javax.swing.{JFrame, JPanel}
+import java.awt.{ Toolkit}
+import scala.swing.BorderPanel.Position._
 
 import views.{EditorPanel, NavigatorPanel, SearchPanel}
 
-class MainFrame extends JFrame {
+import scala.swing.{BorderPanel, Frame}
+
+class MainFrame extends Frame {
 
 
   val searchPanel = new SearchPanel()
@@ -16,19 +18,21 @@ class MainFrame extends JFrame {
 
   private def initializeComponents = {
 
-    val contentPane = new JPanel(new BorderLayout());
-    contentPane.add(searchPanel, BorderLayout.NORTH);
-    contentPane.add(navigatorPanel, BorderLayout.WEST);
-    contentPane.add(editorPanel, BorderLayout.CENTER);
+    val contentPane = new BorderPanel
+    contentPane.contents
+    contents = new BorderPanel {
+      layout(searchPanel) = North
+      layout(navigatorPanel) = West
+      layout(editorPanel) = Center
+    }
 
-    setContentPane(contentPane)
-
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+    import javax.swing.WindowConstants.EXIT_ON_CLOSE
+    peer.setDefaultCloseOperation(EXIT_ON_CLOSE)
 
     val frameWidth = 800
     val frameHeight = 600
     val screenSize = Toolkit.getDefaultToolkit().getScreenSize()
-    setBounds( (screenSize.getWidth().toInt - frameWidth)/2 , 0, frameWidth, frameHeight)
+    peer.setBounds( (screenSize.getWidth().toInt - frameWidth)/2 , 0, frameWidth, frameHeight)
 
   }
 

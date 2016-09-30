@@ -7,7 +7,7 @@ object Main extends App{
 
   val mainFrame = new MainFrame
 
-  mainFrame.setVisible(true)
+  mainFrame.visible = true
 
 
 }

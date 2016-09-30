@@ -1,9 +1,11 @@
 package views
 
-import java.awt.Color
-import javax.swing.JPanel
+import scala.swing.{Button, Panel, TextField}
 
-class SearchPanel extends JPanel{
+class SearchPanel extends Panel{
 
-  setBackground(Color.GREEN)
+  val textField = new TextField()
+
+  private val myContents = (new Content += new Button())
+  override def contents = myContents
 }
