@@ -2,14 +2,15 @@ package views
 
 import constants.AppEventConstants
 import entities.{Topic, TopicSmall}
-import services.{AppEvent, AppEventService}
+import services.{AppEvent, AppEventService, NotificationService}
+import utils.QuestionToStringConverter
 
 import scala.swing.BorderPanel.Position
 import scala.swing.{BorderPanel, TextArea}
-import scala.util.Success
+import scala.util.{Failure, Success}
 
 
-class EditorPanel(appEventService: AppEventService) extends BorderPanel {
+class EditorPanel(appEventService: AppEventService, notificationService: NotificationService) extends BorderPanel {
   import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -19,6 +20,9 @@ class EditorPanel(appEventService: AppEventService) extends BorderPanel {
 
   def onTopicLoaded(topic : Topic): Unit = {
 
+    val text = QuestionToStringConverter.questionsToString(topic.questions)
+
+    textArea.text = text
   }
 
   def onOpenTopic (topic : AppEvent): Unit = {
@@ -27,6 +31,7 @@ class EditorPanel(appEventService: AppEventService) extends BorderPanel {
           ts.repo.getTopic(ts)
             .onComplete {
               case Success(topic) => onTopicLoaded(topic)
+              case Failure(t) => notificationService.error(s"Failed to load topic ${ts.name} with error $t")
             }
         }
         case _ =>

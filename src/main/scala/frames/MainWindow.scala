@@ -5,7 +5,7 @@ import java.io.File
 
 import entities.TopicSmall
 import services.{NavigationService, Repository}
-import services.impl.{AppEventService, FileService, RepositoryService}
+import services.impl.{AppEventService, FileService, NotificationService, RepositoryService}
 
 import scala.swing.BorderPanel.Position._
 import views.{EditorPanel, NavigatorPanel, SearchPanel}
@@ -17,6 +17,7 @@ class MainWindow extends MainFrame {
 
   val fileService = new FileService("./main-repository")
 
+  val notificationService = new NotificationService
   val appEventService = new AppEventService
   val repositoryService = new RepositoryService(fileService)
   val navigationService = new NavigationService {
@@ -25,7 +26,7 @@ class MainWindow extends MainFrame {
 
   val searchPanel = new SearchPanel()
   val navigatorPanel = new NavigatorPanel(repositoryService, navigationService)
-  val editorPanel = new EditorPanel(appEventService)
+  val editorPanel = new EditorPanel(appEventService, notificationService)
 
   initializeComponents
 
