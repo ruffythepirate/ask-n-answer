@@ -17,11 +17,15 @@ class NavigatorPanel (repositoryService: RepositoryService) extends BorderPanel{
 
   layout(tree) = Position.Center
 
-  def initializeRepositories = {
+  def initializeRepositories {
     val allRepositories = repositoryService.getRepositories
 
-      val treeModel = TreeModel(allRepositories.map( repo => Node(repo.name, None)).toArray:_*)(_.children)
+    val treeModel = if(allRepositories.nonEmpty) {
+      TreeModel(allRepositories.map( repo => Node(repo.name, None)).toArray:_*)(_.children)
 
-      tree.model = treeModel
+    } else {
+      TreeModel(new Node("No Repositories Available", None))(_.children)
+    }
+    tree.model = treeModel
   }
 }
