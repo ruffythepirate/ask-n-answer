@@ -1,20 +1,27 @@
 package views
 
+import services.{FileService, Repository, RepositoryService}
+
 import scala.swing.BorderPanel.Position
 import scala.swing.BorderPanel
 import scalaswingcontrib.tree.{Tree, TreeModel}
 
-case class Node[A](value: A, children: Node[A]*)
+case class Node( value: String, tag : Option[Any], children: Node*)
 
-class NavigatorPanel extends BorderPanel{
+class NavigatorPanel (repositoryService: RepositoryService) extends BorderPanel{
 
-
-  val menuItems = Node("Hobbies", Node("Skateboarding"))
-
-  val tree = new Tree[Node[String]] {
-      model = TreeModel(menuItems)(_.children)
+  val tree = new Tree[Node] {
+      model = TreeModel[Node]()(_.children)
       renderer = Tree.Renderer(_.value)
     }
 
   layout(tree) = Position.Center
+
+  def initializeRepositories = {
+    val allRepositories = repositoryService.getRepositories
+
+      val treeModel = TreeModel(allRepositories.map( repo => Node(repo.name, None)).toArray:_*)(_.children)
+
+      tree.model = treeModel
+  }
 }

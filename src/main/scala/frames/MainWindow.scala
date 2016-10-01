@@ -1,6 +1,10 @@
 package frames
 
 import java.awt.Toolkit
+import java.io.File
+
+import services.FileService
+import services.impl.RepositoryService
 
 import scala.swing.BorderPanel.Position._
 import views.{EditorPanel, NavigatorPanel, SearchPanel}
@@ -10,8 +14,13 @@ import scala.swing.{BorderPanel, MainFrame}
 class MainWindow extends MainFrame {
 
 
+  val fileService = new FileService {
+    override def listFiles: Seq[File] = ???
+  }
+  val repositoryService = new RepositoryService(fileService)
+
   val searchPanel = new SearchPanel()
-  val navigatorPanel = new NavigatorPanel()
+  val navigatorPanel = new NavigatorPanel(repositoryService)
   val editorPanel = new EditorPanel()
 
   initializeComponents
