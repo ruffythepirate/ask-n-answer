@@ -1,6 +1,5 @@
 package services.impl
 import entities.{RepositoryType, TopicSmall}
-import services.FileService
 
 class LocalRepository (fileService : FileService) extends services.Repository {
 

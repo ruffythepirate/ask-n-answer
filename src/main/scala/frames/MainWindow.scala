@@ -13,7 +13,7 @@ import scala.swing.{BorderPanel, MainFrame}
 class MainWindow extends MainFrame {
 
 
-  val fileService = new FileService
+  val fileService = new FileService("./main-repository")
 
   val repositoryService = new RepositoryService(fileService)
 
