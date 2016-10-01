@@ -3,6 +3,8 @@ package frames
 import java.awt.Toolkit
 import java.io.File
 
+import entities.TopicSmall
+import services.{NavigationService, Repository}
 import services.impl.{FileService, RepositoryService}
 
 import scala.swing.BorderPanel.Position._
@@ -16,9 +18,12 @@ class MainWindow extends MainFrame {
   val fileService = new FileService("./main-repository")
 
   val repositoryService = new RepositoryService(fileService)
+  val navigationService = new NavigationService {
+    override def openTopic( topic: TopicSmall): Unit = ???
+  }
 
   val searchPanel = new SearchPanel()
-  val navigatorPanel = new NavigatorPanel(repositoryService)
+  val navigatorPanel = new NavigatorPanel(repositoryService, navigationService)
   val editorPanel = new EditorPanel()
 
   initializeComponents
