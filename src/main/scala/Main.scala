@@ -1,13 +1,12 @@
 import java.awt.{Dimension, Toolkit}
 import javax.swing.JFrame
 
-import frames.MainFrame
+import frames.MainWindow
 
-object Main extends App{
+import scala.swing.SimpleSwingApplication
 
-  val mainFrame = new MainFrame
+object Main extends SimpleSwingApplication{
 
-  mainFrame.visible = true
-
+  def top = new MainWindow
 
 }

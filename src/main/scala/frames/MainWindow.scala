@@ -1,13 +1,13 @@
 package frames
 
-import java.awt.{ Toolkit}
-import scala.swing.BorderPanel.Position._
+import java.awt.Toolkit
 
+import scala.swing.BorderPanel.Position._
 import views.{EditorPanel, NavigatorPanel, SearchPanel}
 
-import scala.swing.{BorderPanel, Frame}
+import scala.swing.{BorderPanel, MainFrame}
 
-class MainFrame extends Frame {
+class MainWindow extends MainFrame {
 
 
   val searchPanel = new SearchPanel()

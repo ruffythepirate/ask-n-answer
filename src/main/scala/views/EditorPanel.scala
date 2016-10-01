@@ -1,9 +1,12 @@
 package views
 
-import java.awt.Color
+import scala.swing.BorderPanel.Position
+import scala.swing.{BorderPanel, TextArea}
 
-import scala.swing.Panel
+class EditorPanel extends BorderPanel {
+  val textArea = new TextArea()
 
-class EditorPanel extends Panel {
-  background = (Color.BLUE)
+  layout( textArea ) = Position.Center
+
+
 }
