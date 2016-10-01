@@ -27,5 +27,9 @@ class AppEventService extends services.AppEventService{
     }
   }
 
-  override def unsubscribeFromEvent(name: String, method: (AppEvent) => Unit): Unit = ???
+  override def unsubscribeFromEvent(name: String, method: (AppEvent) => Unit): Unit = {
+    if(topicListeners.contains(name)) {
+      topicListeners = topicListeners + (name -> (topicListeners(name).filter(_ != method)))
+    }
+  }
 }

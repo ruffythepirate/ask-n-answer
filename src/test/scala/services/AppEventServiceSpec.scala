@@ -67,7 +67,25 @@ class AppEventServiceSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
     }
 
     describe("unsubscribe") {
+      it("can called unsubscribe on a method that isnt registered") {
+        var wasCalled1 = false
+        val myFunc1 = (e : AppEvent) => {
+          wasCalled1 = true
+        }
+        sut.unsubscribeFromEvent(AppEventConstants.openTopic, myFunc1)
+      }
 
+      it("unsubscribes a method") {
+        var wasCalled1 = false
+        val myFunc1 = (e : AppEvent) => {
+          wasCalled1 = true
+        }
+        sut.subscribeToEvent(AppEventConstants.openTopic, myFunc1)
+        sut.unsubscribeFromEvent(AppEventConstants.openTopic, myFunc1)
+        sut.publishEvent(AppEventConstants.openTopic, null)
+        assert(wasCalled1 === false)
+
+      }
     }
 
 
