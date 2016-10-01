@@ -12,7 +12,13 @@ class AppEventServiceSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
  }
 
   describe("AppEventService") {
+
     describe("subscribe and publish") {
+
+      it("can publish to an event with no listeners") {
+        sut.publishEvent("random topic", null)
+      }
+
       it("can publish event to one listeners") {
         var wasCalled = false
         val myFunc = (e : AppEvent) => {

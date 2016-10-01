@@ -5,7 +5,7 @@ import java.io.File
 
 import entities.TopicSmall
 import services.{NavigationService, Repository}
-import services.impl.{FileService, RepositoryService}
+import services.impl.{AppEventService, FileService, RepositoryService}
 
 import scala.swing.BorderPanel.Position._
 import views.{EditorPanel, NavigatorPanel, SearchPanel}
@@ -17,6 +17,7 @@ class MainWindow extends MainFrame {
 
   val fileService = new FileService("./main-repository")
 
+  val appEventService = new AppEventService
   val repositoryService = new RepositoryService(fileService)
   val navigationService = new NavigationService {
     override def openTopic( topic: TopicSmall): Unit = ???
@@ -24,7 +25,7 @@ class MainWindow extends MainFrame {
 
   val searchPanel = new SearchPanel()
   val navigatorPanel = new NavigatorPanel(repositoryService, navigationService)
-  val editorPanel = new EditorPanel()
+  val editorPanel = new EditorPanel(appEventService)
 
   initializeComponents
 

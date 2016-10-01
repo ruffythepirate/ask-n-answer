@@ -1,5 +1,7 @@
 package services.impl
-import entities.{RepositoryType, TopicSmall}
+import entities.{RepositoryType, Topic, TopicSmall}
+
+import scala.concurrent.Future
 
 class LocalRepository (fileService : FileService) extends services.Repository {
 
@@ -8,6 +10,9 @@ class LocalRepository (fileService : FileService) extends services.Repository {
 
     files.map( file => TopicSmall(file.getName, this))
   }
+
+
+  override def getTopic(topicHead: TopicSmall): Future[Topic] = ???
 
   override def getType: _root_.entities.RepositoryType.Value = RepositoryType.Local
 
