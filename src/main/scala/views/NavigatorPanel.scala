@@ -1,5 +1,6 @@
 package views
 
+import entities.{Topic, TopicSmall}
 import services.{FileService, Repository, RepositoryService}
 
 import scala.swing.BorderPanel.Position
@@ -21,11 +22,20 @@ class NavigatorPanel (repositoryService: RepositoryService) extends BorderPanel{
     val allRepositories = repositoryService.getRepositories
 
     val treeModel = if(allRepositories.nonEmpty) {
-      TreeModel(allRepositories.map( repo => Node(repo.name, None)).toArray:_*)(_.children)
+      TreeModel(allRepositories.map( repoToNode ):_*)(_.children)
 
     } else {
       TreeModel(new Node("No Repositories Available", None))(_.children)
     }
     tree.model = treeModel
+  }
+
+  private def repoToNode(repo : Repository): Node = {
+
+    Node(repo.name, Some(repo), repo.getTopics.map(topicToNode):_* )
+  }
+
+  private def topicToNode(topic : TopicSmall) = {
+    Node(topic.name, Some(topic), Seq.empty[Node]:_*)
   }
 }

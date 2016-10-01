@@ -12,5 +12,7 @@ class LocalRepository (fileService : FileService) extends services.Repository {
 
   override def getType: _root_.entities.RepositoryType.Value = RepositoryType.Local
 
-  override def name: String = "Local"
+  val currentDir = fileService.pwd
+
+  override def name: String = s"Local ($currentDir)"
 }

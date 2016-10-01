@@ -1,5 +1,6 @@
 package views
 
+import entities.TopicSmall
 import org.scalatest.{BeforeAndAfter, FunSpec}
 import org.scalatest.mock.MockitoSugar
 import org.mockito.Mockito._
@@ -48,6 +49,20 @@ class NavigatorPanelSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
       assert( panel.tree.model.size === 2)
     }
 
+    it("initializes repository node with topics") {
+      val mockRepos = Seq[Repository](
+        createMockRepository("First", TopicSmall("First"), TopicSmall("Second"))
+      )
+
+      when(repositoryService.getRepositories).thenReturn(mockRepos)
+
+      val panel = createNavigatorPanel
+      panel.initializeRepositories
+
+      val firstNode = panel.tree.model.roots(0)
+      assert( firstNode.children.size === 2)
+    }
+
     it("tells the user that there are no repos if list is empty") {
       val mockRepos = Seq[Repository](
       )
@@ -61,8 +76,10 @@ class NavigatorPanelSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
     }
   }
 
-  def createMockRepository(name : String) = {
+  def createMockRepository(name : String, topics : TopicSmall*) = {
     val repoMock = mock[Repository]
+
+    when(repoMock.getTopics).thenReturn(topics)
 
     when(repoMock.name).thenReturn(name)
     repoMock
