@@ -14,24 +14,21 @@ class LocalRepository(fileService: services.FileService)(implicit ec: ExecutionC
     files.map(file => TopicSmall(file.getName, this))
   }
 
-  private def getTopicAllLines(topicHead : TopicSmall) : Seq[String] = {
-    val source = fileService.openFile(topicHead.name)
-
-    var allLines: Seq[String] = Seq.empty
-    try {
-      allLines = source.getLines().toSeq
-    } finally source.close()
-
-    allLines
-  }
-
   override def getTopic(topicHead: TopicSmall): Future[Topic] = {
     Future {
 
-      val allLines = getTopicAllLines(topicHead)
+      val source = fileService.openFile(topicHead.name)
 
-      val questions = getQuestionsFromText(allLines)
-      new Topic(topicHead.name, questions)
+      var allLines: Seq[String] = Seq.empty
+
+      var topic : Topic = null
+      try {
+        allLines = source.getLines().toSeq
+
+        val questions = getQuestionsFromText(allLines)
+        topic = new Topic(topicHead.name, questions)
+      } finally source.close()
+      topic
     }
   }
 

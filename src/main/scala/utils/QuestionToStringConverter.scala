@@ -16,12 +16,11 @@ object QuestionToStringConverter {
     stringBuilder.append(q.question)
 
     q.answer match {
-      case Some(answer) => stringBuilder.append("\n"); stringBuilder.append(answer)
+      case Some(answer) => stringBuilder.append("\n\n"); stringBuilder.append(answer)
       case None =>
     }
 
-    stringBuilder.append("\n")
-    stringBuilder.append("\n")
+    stringBuilder.append("\n\n\n")
   }
 
   def questionToString(question : Question ) = {

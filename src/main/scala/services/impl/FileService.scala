@@ -4,6 +4,7 @@ import java.io.File
 import scala.io.Source
 
 class FileService(homePath : String) extends services.FileService{
+  import scala.io.Codec.UTF8
 
   if(!pathExists(homePath)) {
     createPath(homePath)
@@ -20,7 +21,10 @@ class FileService(homePath : String) extends services.FileService{
   }
 
 
-  override def openFile(name: String): Source = ???
+  override def openFile(name: String): Source = {
+    val file = new File(home.getPath + "/" + name)
+    Source.fromFile(file)
+  }
 
   override def listFiles: Seq[File] = {
     home.listFiles()

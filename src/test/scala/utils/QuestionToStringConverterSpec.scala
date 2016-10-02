@@ -15,7 +15,7 @@ class QuestionToStringConverterSpec extends FunSpec {
 
         val result = questionToString(q)
 
-        assert(result === "a\nb\n\n")
+        assert(result === "a\n\nb\n\n\n")
       }
 
       it("can translate multiple questions") {
@@ -23,7 +23,7 @@ class QuestionToStringConverterSpec extends FunSpec {
 
         val result = questionsToString(questions)
 
-        assert(result === "a\nb\n\nc\nd\n\n")
+        assert(result === "a\n\nb\n\n\nc\n\nd\n\n\n")
       }
 
     }
