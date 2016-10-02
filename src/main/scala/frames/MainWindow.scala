@@ -3,9 +3,7 @@ package frames
 import java.awt.Toolkit
 import java.io.File
 
-import entities.TopicSmall
-import services.{NavigationService, Repository}
-import services.impl.{AppEventService, FileService, NotificationService, RepositoryService}
+import services.impl._
 
 import scala.swing.BorderPanel.Position._
 import views.{EditorPanel, NavigatorPanel, SearchPanel}
@@ -21,9 +19,7 @@ class MainWindow extends MainFrame {
   val notificationService = new NotificationService
   val appEventService = new AppEventService
   val repositoryService = new RepositoryService(fileService)
-  val navigationService = new NavigationService {
-    override def openTopic( topic: TopicSmall): Unit = ???
-  }
+  val navigationService = new NavigationService(appEventService)
 
   val searchPanel = new SearchPanel()
   val navigatorPanel = new NavigatorPanel(repositoryService, navigationService)

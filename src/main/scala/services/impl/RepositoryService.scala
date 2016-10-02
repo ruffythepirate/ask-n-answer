@@ -1,9 +1,10 @@
 package services.impl
 
-import services.FileService
+
 
 class RepositoryService(fileService : FileService) extends services.RepositoryService{
 
+  import scala.concurrent.ExecutionContext.Implicits.global
   def getRepositories = {
     Seq(new LocalRepository( fileService) )
   }

@@ -15,9 +15,10 @@ object QuestionToStringConverter {
   private def appendQuestionToBuilder(q : Question, stringBuilder : StringBuilder): Unit = {
     stringBuilder.append(q.question)
 
-    stringBuilder.append("\n")
-
-    stringBuilder.append(q.answer)
+    q.answer match {
+      case Some(answer) => stringBuilder.append("\n"); stringBuilder.append(answer)
+      case None =>
+    }
 
     stringBuilder.append("\n")
     stringBuilder.append("\n")

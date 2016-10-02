@@ -1,23 +1,27 @@
 package views
 
 import java.io.FileNotFoundException
+import java.util.concurrent.Executor
 
 import constants.AppEventConstants
 import entities.{Question, Topic, TopicSmall}
+import org.mockito.Matchers.any
+import org.mockito.Mockito._
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfter, FunSpec}
 import services.impl.AppEventService
-import org.mockito.Mockito._
 import services.{NotificationService, Repository}
-import org.mockito.Matchers.any
-import org.scalatest.concurrent.ScalaFutures
 
-import scala.concurrent.{Await, ExecutionContext, Future, Promise}
-import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Promise}
 
 class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar with ScalaFutures{
 
-  import scala.concurrent.ExecutionContext.Implicits.global
+  implicit val currentThreadExecutionContext = ExecutionContext.fromExecutor(
+    new Executor {
+      // Do not do this!
+      def execute(runnable: Runnable) { runnable.run() }
+    })
 
   var appEventService : AppEventService = _
     var notificationService : NotificationService = _
@@ -64,6 +68,7 @@ class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar with
           appEventService.publishEvent(AppEventConstants.openTopic, topic)
 
           verify(notificationService).error(any())
+
         }
 
         it("sets the text in editor panel based on the questions") {
@@ -89,7 +94,7 @@ class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar with
     }
 
  def createTopic = {
-   val questions = Seq( Question("What is the question", "And that is the answer"))
+   val questions = Seq( Question("What is the question", Option("And that is the answer")))
    Topic ("topic", questions)
  }
 

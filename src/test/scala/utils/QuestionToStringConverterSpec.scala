@@ -11,7 +11,7 @@ class QuestionToStringConverterSpec extends FunSpec {
     describe("from question") {
 
       it("can translate one question into a string") {
-        val q = Question("a", "b")
+        val q = Question("a", Some("b"))
 
         val result = questionToString(q)
 
@@ -19,7 +19,7 @@ class QuestionToStringConverterSpec extends FunSpec {
       }
 
       it("can translate multiple questions") {
-        val questions = Seq(Question("a", "b"), Question("c", "d"))
+        val questions = Seq(Question("a", Some("b")), Question("c", Some("d")))
 
         val result = questionsToString(questions)
 

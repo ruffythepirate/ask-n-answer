@@ -1,6 +1,8 @@
 package services.impl
 import java.io.File
 
+import scala.io.Source
+
 class FileService(homePath : String) extends services.FileService{
 
   if(!pathExists(homePath)) {
@@ -17,6 +19,8 @@ class FileService(homePath : String) extends services.FileService{
     new File(path).mkdirs
   }
 
+
+  override def openFile(name: String): Source = ???
 
   override def listFiles: Seq[File] = {
     home.listFiles()
