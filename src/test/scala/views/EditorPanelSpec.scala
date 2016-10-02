@@ -10,12 +10,16 @@ import services.impl.AppEventService
 import org.mockito.Mockito._
 import services.{NotificationService, Repository}
 import org.mockito.Matchers.any
+import org.scalatest.concurrent.ScalaFutures
 
-import scala.concurrent.Future
+import scala.concurrent.{Await, ExecutionContext, Future, Promise}
+import scala.concurrent.duration._
 
-class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar {
+class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar with ScalaFutures{
 
-    var appEventService : AppEventService = _
+  import scala.concurrent.ExecutionContext.Implicits.global
+
+  var appEventService : AppEventService = _
     var notificationService : NotificationService = _
 
     var mockRepo : Repository = _
@@ -52,7 +56,10 @@ class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar {
           val topic = createTopicSmall
           val bigTopic = createTopic
 
-          when(mockRepo.getTopic(topic)).thenReturn(Future.failed(new FileNotFoundException()))
+          val promise = Promise[Topic]
+            val future = promise.failure(new FileNotFoundException()).future
+
+          when(mockRepo.getTopic(topic)).thenReturn(future)
 
           appEventService.publishEvent(AppEventConstants.openTopic, topic)
 
@@ -66,10 +73,17 @@ class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar {
           val topic = createTopicSmall
           val bigTopic = createTopic
 
-          when(mockRepo.getTopic(topic)).thenReturn(Future.successful(bigTopic))
+          val promise = Promise[Topic]
+          promise.success(bigTopic)
+          when(mockRepo.getTopic(topic)).thenReturn(promise.future)
 
           appEventService.publishEvent(AppEventConstants.openTopic, topic)
-          assert(editor.textArea.text.size > 0)
+
+          whenReady(promise.future)
+          {
+            case topic =>
+              assert(editor.textArea.text.size > 0)
+          }
         }
       }
     }

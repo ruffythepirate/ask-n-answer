@@ -5,13 +5,13 @@ import entities.{Topic, TopicSmall}
 import services.{AppEvent, AppEventService, NotificationService}
 import utils.QuestionToStringConverter
 
+import scala.concurrent.ExecutionContext
 import scala.swing.BorderPanel.Position
 import scala.swing.{BorderPanel, TextArea}
 import scala.util.{Failure, Success}
 
 
-class EditorPanel(appEventService: AppEventService, notificationService: NotificationService) extends BorderPanel {
-  import scala.concurrent.ExecutionContext.Implicits.global
+class EditorPanel(appEventService: AppEventService, notificationService: NotificationService)(implicit ec: ExecutionContext) extends BorderPanel {
 
 
   val textArea = new TextArea()

@@ -14,6 +14,7 @@ import scala.swing.{BorderPanel, MainFrame}
 
 class MainWindow extends MainFrame {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
 
   val fileService = new FileService("./main-repository")
 
