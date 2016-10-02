@@ -13,96 +13,149 @@ import org.scalatest.{BeforeAndAfter, FunSpec}
 import services.impl.AppEventService
 import services.{NotificationService, Repository}
 
-import scala.concurrent.{ExecutionContext, Promise}
+import scala.concurrent.{ExecutionContext, Future, Promise}
 
-class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar with ScalaFutures{
+class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar with ScalaFutures {
 
   implicit val currentThreadExecutionContext = ExecutionContext.fromExecutor(
     new Executor {
       // Do not do this!
-      def execute(runnable: Runnable) { runnable.run() }
+      def execute(runnable: Runnable) {
+        runnable.run()
+      }
     })
 
-  var appEventService : AppEventService = _
-    var notificationService : NotificationService = _
+  var appEventService: AppEventService = _
+  var notificationService: NotificationService = _
 
-    var mockRepo : Repository = _
+  var mockRepo: Repository = _
 
-    before {
-      appEventService = new AppEventService
+  before {
+    appEventService = new AppEventService
 
-      notificationService = mock[NotificationService]
+    notificationService = mock[NotificationService]
 
-      mockRepo = mock[Repository]
+    mockRepo = mock[Repository]
+  }
+
+  describe("EditorPanel") {
+    describe("initialization") {
+      it("should initialize") {
+        createEditorPanel
+      }
+
     }
 
-    describe("EditorPanel") {
-      describe("initialization") {
-        it("should initialize") {
-          createEditorPanel
-        }
+    describe("listening to topic change") {
+      it("should load a topic on topic change.") {
+        val editor = createEditorPanel()
+
+        val topic = createTopicSmall()
+        appEventService.publishEvent(AppEventConstants.openTopic, topic)
+
+        verify(mockRepo).getTopic(topic)
+      }
+
+      it("should not reload a topic if it is already open.") {
+        val editor = createEditorPanel()
+        val topic = createTopicSmall()
+        val bigTopic = createTopic
+
+        when(mockRepo.getTopic(topic)).thenReturn(Future.successful(bigTopic))
+
+        appEventService.publishEvent(AppEventConstants.openTopic, topic)
+
+        val text = editor.textArea.text
+        editor.textArea.text = text + " some addition"
+        val newText = editor.textArea.text
+
+        appEventService.publishEvent(AppEventConstants.openTopic, topic)
+        assert(editor.textArea.text === newText)
+      }
+
+      it("should be able to open two topic at the same time.") {
+        // Arrange
+        val editor = createEditorPanel()
+        val topic1 = createTopicSmall("first")
+        val topic2 = createTopicSmall("second")
+        val bigTopic = createTopic
+
+        when(mockRepo.getTopic(topic1)).thenReturn(Future.successful(bigTopic))
+        when(mockRepo.getTopic(topic2)).thenReturn(Future.successful(bigTopic))
+
+        //Act
+        appEventService.publishEvent(AppEventConstants.openTopic, topic1)
+
+        val text = editor.textArea.text
+        editor.textArea.text = text + " some addition"
+        val newText = editor.textArea.text
+        appEventService.publishEvent(AppEventConstants.openTopic, topic2)
+        appEventService.publishEvent(AppEventConstants.openTopic, topic1)
+
+        //Assert
+        assert(editor.textArea.text === newText)
+      }
+
+      it("should save a topic if Save Action is triggered is clicked.") {
+
+        val editor = createEditorPanel()
+        val topic = createTopicSmall()
+        val bigTopic = createTopic
+
+        when(mockRepo.getTopic(topic)).thenReturn(Future.successful(bigTopic))
+
+        appEventService.publishEvent(AppEventConstants.openTopic, topic)
+        editor.textArea.text += "some addition"
+
+        appEventService.publishEvent(AppEventConstants.saveCurrentTopic)
+
+        verify(topic.repo).save(any())
+      }
+
+      it("handles when get topic future fails") {
+        val editor = createEditorPanel()
+
+        val topic = createTopicSmall()
+        val bigTopic = createTopic
+
+        val promise = Promise[Topic]
+        val future = promise.failure(new FileNotFoundException()).future
+
+        when(mockRepo.getTopic(topic)).thenReturn(future)
+
+        appEventService.publishEvent(AppEventConstants.openTopic, topic)
+
+        verify(notificationService).error(any())
 
       }
 
-      describe("listening to topic change") {
-        it("should load a topic on topic change.") {
-          val editor = createEditorPanel()
+      it("sets the text in editor panel based on the questions") {
+        val editor = createEditorPanel()
 
-          val topic = createTopicSmall
-          appEventService.publishEvent(AppEventConstants.openTopic, topic)
+        assert(editor.textArea.text.size === 0)
+        val topic = createTopicSmall()
+        val bigTopic = createTopic
 
-          verify(mockRepo).getTopic(topic)
-        }
+        val promise = Promise[Topic]
+        promise.success(bigTopic)
+        when(mockRepo.getTopic(topic)).thenReturn(promise.future)
 
-        it("handles when get topic future fails") {
-          val editor = createEditorPanel()
-
-          val topic = createTopicSmall
-          val bigTopic = createTopic
-
-          val promise = Promise[Topic]
-            val future = promise.failure(new FileNotFoundException()).future
-
-          when(mockRepo.getTopic(topic)).thenReturn(future)
-
-          appEventService.publishEvent(AppEventConstants.openTopic, topic)
-
-          verify(notificationService).error(any())
-
-        }
-
-        it("sets the text in editor panel based on the questions") {
-          val editor = createEditorPanel()
-
-          assert(editor.textArea.text.size === 0)
-          val topic = createTopicSmall
-          val bigTopic = createTopic
-
-          val promise = Promise[Topic]
-          promise.success(bigTopic)
-          when(mockRepo.getTopic(topic)).thenReturn(promise.future)
-
-          appEventService.publishEvent(AppEventConstants.openTopic, topic)
-
-          whenReady(promise.future)
-          {
-            case topic =>
-              assert(editor.textArea.text.size > 0)
-          }
-        }
+        appEventService.publishEvent(AppEventConstants.openTopic, topic)
+        assert(editor.textArea.text.size > 0)
       }
     }
+  }
 
- def createTopic = {
-   val questions = Seq( Question("What is the question", Option("And that is the answer")))
-   Topic ("topic", questions)
- }
+  def createTopic = {
+    val questions = Seq(Question("What is the question", Option("And that is the answer")))
+    Topic("topic", questions)
+  }
 
-    def createTopicSmall = {
-      new TopicSmall("my topic", mockRepo)
-    }
+  def createTopicSmall(name: String = "my topic") = {
+    new TopicSmall(name, mockRepo)
+  }
 
-    def createEditorPanel() = {
-      new EditorPanel(appEventService, notificationService)
-    }
+  def createEditorPanel() = {
+    new EditorPanel(appEventService, notificationService)
+  }
 }

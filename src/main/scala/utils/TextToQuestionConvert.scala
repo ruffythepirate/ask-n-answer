@@ -2,7 +2,29 @@ package utils
 
 import entities.Question
 
+import scala.collection.mutable.ArrayBuffer
+
 object TextToQuestionConvert {
+
+  def getQuestionsFromText(allLines: Seq[String]): Seq[Question] = {
+    val questions = new ArrayBuffer[Question]
+    var currentIndex = 0
+    while (currentIndex < allLines.size) {
+      val newIndex: Int = extractNextQuestion(allLines, questions, currentIndex)
+      currentIndex = newIndex
+    }
+    questions
+  }
+
+  def extractNextQuestion(allLines: Seq[String], questions: ArrayBuffer[Question], currentIndex: Int): Int = {
+    val (newIndex, optionQuestion) = TextToQuestionConvert.getNextQuestionItem(currentIndex, allLines)
+    optionQuestion match {
+      case Some(question) =>
+        questions += question
+      case None =>
+    }
+    newIndex
+  }
 
   def getNextQuestionItem(startIndex: Int, allLines: Seq[String]): (Int, Option[Question]) = {
 

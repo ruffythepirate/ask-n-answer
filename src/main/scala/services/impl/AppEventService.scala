@@ -7,7 +7,7 @@ class AppEventService extends services.AppEventService {
 
   private var topicListeners = Map[String, Seq[AppEvent => Unit]]()
 
-  override def publishEvent(name: String, data: Any): Unit = {
+  override def publishEvent(name: String, data: Any = null): Unit = {
 
     if (topicListeners.contains(name)) {
 

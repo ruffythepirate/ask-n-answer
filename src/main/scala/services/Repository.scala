@@ -12,5 +12,7 @@ trait Repository {
 
   def getType : RepositoryType.Value
 
+  def save(topic : Topic) : Unit
+
   def name : String
 }

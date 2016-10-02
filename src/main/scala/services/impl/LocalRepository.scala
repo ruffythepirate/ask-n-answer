@@ -14,6 +14,8 @@ class LocalRepository(fileService: services.FileService)(implicit ec: ExecutionC
     files.map(file => TopicSmall(file.getName, this))
   }
 
+  override def save(topic: Topic): Unit = ???
+
   override def getTopic(topicHead: TopicSmall): Future[Topic] = {
     Future {
 
@@ -25,32 +27,14 @@ class LocalRepository(fileService: services.FileService)(implicit ec: ExecutionC
       try {
         allLines = source.getLines().toSeq
 
-        val questions = getQuestionsFromText(allLines)
+        val questions = TextToQuestionConvert.getQuestionsFromText(allLines)
         topic = new Topic(topicHead.name, questions)
       } finally source.close()
       topic
     }
   }
 
-  def getQuestionsFromText(allLines: Seq[String]): ArrayBuffer[Question] = {
-    val questions = new ArrayBuffer[Question]
-    var currentIndex = 0
-    while (currentIndex < allLines.size) {
-      val newIndex: Int = extractNextQuestion(allLines, questions, currentIndex)
-      currentIndex = newIndex
-    }
-    questions
-  }
 
-  def extractNextQuestion(allLines: Seq[String], questions: ArrayBuffer[Question], currentIndex: Int): Int = {
-    val (newIndex, optionQuestion) = TextToQuestionConvert.getNextQuestionItem(currentIndex, allLines)
-    optionQuestion match {
-      case Some(question) =>
-        questions += question
-      case None =>
-    }
-    newIndex
-  }
 
   override def getType: _root_.entities.RepositoryType.Value = RepositoryType.Local
 
