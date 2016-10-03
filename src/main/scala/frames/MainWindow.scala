@@ -1,13 +1,17 @@
 package frames
 
 import java.awt.Toolkit
+import java.awt.event.KeyEvent
 import java.io.File
 
+import constants.AppEventConstants
 import services.impl._
 
 import scala.swing.BorderPanel.Position._
 import views.{EditorPanel, NavigatorPanel, SearchPanel}
 
+import scala.swing.event.Key.Modifier
+import scala.swing.event.{Key, KeyPressed, KeyTyped}
 import scala.swing.{BorderPanel, MainFrame}
 
 class MainWindow extends MainFrame {
@@ -24,6 +28,15 @@ class MainWindow extends MainFrame {
   val searchPanel = new SearchPanel()
   val navigatorPanel = new NavigatorPanel(repositoryService, navigationService)
   val editorPanel = new EditorPanel(appEventService, notificationService)
+
+  listenTo(editorPanel.textArea.keys)
+  reactions += {
+    case kt : KeyTyped =>
+      val keyIsCtrlS = kt.peer.getKeyChar == '\u0013'
+
+      if(keyIsCtrlS)
+          appEventService.publishEvent(AppEventConstants.saveCurrentTopic)
+  }
 
   initializeComponents
 
