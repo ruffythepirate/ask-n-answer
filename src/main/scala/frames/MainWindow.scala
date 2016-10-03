@@ -8,7 +8,7 @@ import constants.AppEventConstants
 import services.impl._
 
 import scala.swing.BorderPanel.Position._
-import views.{EditorPanel, NavigatorPanel, SearchPanel}
+import components.{EditorPanel, NavigatorPanel, SearchPanel, TopMenuBar}
 
 import scala.swing.event.Key.Modifier
 import scala.swing.event.{Key, KeyPressed, KeyTyped}
@@ -24,6 +24,9 @@ class MainWindow extends MainFrame {
   val appEventService = new AppEventService
   val repositoryService = new RepositoryService(fileService)
   val navigationService = new NavigationService(appEventService)
+
+
+  val topMenuBar = new TopMenuBar(appEventService)
 
   val searchPanel = new SearchPanel()
   val navigatorPanel = new NavigatorPanel(repositoryService, navigationService)
@@ -51,6 +54,8 @@ class MainWindow extends MainFrame {
       layout(navigatorPanel) = West
       layout(editorPanel) = Center
     }
+
+    menuBar = topMenuBar
 
     import javax.swing.WindowConstants.EXIT_ON_CLOSE
     peer.setDefaultCloseOperation(EXIT_ON_CLOSE)

@@ -1,4 +1,4 @@
-package views
+package components
 
 import java.io.FileNotFoundException
 import java.util.concurrent.Executor

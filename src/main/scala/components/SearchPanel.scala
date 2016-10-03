@@ -1,4 +1,4 @@
-package views
+package components
 
 import scala.swing.{BorderPanel, TextField}
 import scala.swing.BorderPanel.Position._

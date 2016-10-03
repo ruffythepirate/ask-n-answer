@@ -1,4 +1,4 @@
-package views
+package components
 
 import constants.AppEventConstants
 import entities.{Question, Topic, TopicSmall}

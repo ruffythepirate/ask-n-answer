@@ -1,4 +1,4 @@
-package views
+package components
 
 import entities.TopicSmall
 import org.scalatest.{BeforeAndAfter, FunSpec}
