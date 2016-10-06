@@ -1,7 +1,7 @@
 package services.impl
 
 import entities.{Question, RepositoryType, Topic, TopicSmall}
-import utils.TextToQuestionConvert
+import utils.{QuestionToStringConverter, TextToQuestionConvert}
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.{ExecutionContext, Future}
@@ -14,7 +14,12 @@ class LocalRepository(fileService: services.FileService)(implicit ec: ExecutionC
     files.map(file => TopicSmall(file.getName, this))
   }
 
-  override def save(topic: Topic): Unit = ???
+  override def save(topic: Topic): Unit = {
+
+    val questionsAsText = QuestionToStringConverter.questionsToString(topic.questions)
+
+    fileService.saveFile(topic.name, questionsAsText)
+  }
 
   override def getTopic(topicHead: TopicSmall): Future[Topic] = {
     Future {

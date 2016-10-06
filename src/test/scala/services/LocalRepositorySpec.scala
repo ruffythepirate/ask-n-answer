@@ -1,6 +1,7 @@
 package services
 
 import entities.TopicSmall
+import org.mockito.Mockito
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfter, FunSpec}
 import services.impl.LocalRepository
@@ -11,6 +12,9 @@ import scala.io.Source
 
 class LocalRepositorySpec extends FunSpec with BeforeAndAfter with MockitoSugar with ScalaFutures {
   import scala.concurrent.ExecutionContext.Implicits.global
+  import org.mockito.Matchers.any
+
+  import testutils.TestData._
 
   var fileService: FileService = _
 
@@ -46,6 +50,17 @@ class LocalRepositorySpec extends FunSpec with BeforeAndAfter with MockitoSugar 
           }
         }
       })
+    }
+
+    describe("save") {
+      it("can save a file") {
+        val topicSmall = createTopicSmall
+
+        val topic = createTopic
+        sut.save(topic)
+
+        verify(fileService).saveFile(any(), any())
+      }
     }
   }
 

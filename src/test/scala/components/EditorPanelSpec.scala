@@ -7,6 +7,7 @@ import constants.AppEventConstants
 import entities.{Question, Topic, TopicSmall}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
+
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfter, FunSpec}
@@ -29,6 +30,8 @@ class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar with
   var notificationService: NotificationService = _
 
   var mockRepo: Repository = _
+
+  import testutils.TestData._
 
   before {
     appEventService = new AppEventService
@@ -144,11 +147,6 @@ class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar with
         assert(editor.textArea.text.size > 0)
       }
     }
-  }
-
-  def createTopic = {
-    val questions = Seq(Question("What is the question", Option("And that is the answer")))
-    Topic("topic", questions)
   }
 
   def createTopicSmall(name: String = "my topic") = {
