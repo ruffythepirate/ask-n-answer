@@ -2,6 +2,7 @@ package utils
 
 import entities.Question
 
+import scala.annotation.tailrec
 import scala.collection.mutable.ArrayBuffer
 
 object TextToQuestionConvert {
@@ -46,6 +47,7 @@ object TextToQuestionConvert {
     appendToQuestionBuilder(startIndex, allLines, builder)
   }
 
+  @tailrec()
   private def appendToAnswerBuilder(index: Int, allLines: Seq[String], builder: StringBuilder, lastWasBlank : Boolean): (Int, String) = {
     if (index >= allLines.length) {
       (index, builder.toString())
@@ -54,13 +56,17 @@ object TextToQuestionConvert {
       trimmed match {
         case s if s.isEmpty => {
           if (! lastWasBlank) {
+            if(builder.nonEmpty)
+              builder.append("\n")
             builder.append(allLines(index))
             appendToAnswerBuilder(index + 1, allLines, builder, true)
           }
           else
-            (index, builder.toString())
+            (index, builder.toString().trim)
         }
         case _ =>  {
+          if(builder.nonEmpty)
+            builder.append("\n")
           builder.append(allLines(index))
           appendToAnswerBuilder(index + 1, allLines, builder, false)
         }
@@ -68,6 +74,7 @@ object TextToQuestionConvert {
     }
   }
 
+  @tailrec()
   private def appendToQuestionBuilder(index: Int, allLines: Seq[String], builder: StringBuilder): (Int, String) = {
     if (index >= allLines.length) {
       (index, builder.toString())
@@ -81,6 +88,9 @@ object TextToQuestionConvert {
             (index, builder.toString())
         }
         case _ =>  {
+          if(builder.nonEmpty) {
+            builder.append("\n")
+          }
           builder.append(allLines(index))
           appendToQuestionBuilder(index + 1, allLines, builder)
         }

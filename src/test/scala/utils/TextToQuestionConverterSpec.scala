@@ -18,6 +18,31 @@ class TextToQuestionConverterSpec extends FunSpec{
         assert(result._1 === 3)
       }
 
+      it("handles when there is a multiline questions") {
+        val text = Seq[String]("myfile?",
+          "many lines",
+          "The story of coming of age.",
+          "",
+          "nice, right!")
+
+        val result = TextToQuestionConvert.getNextQuestionItem(0, text)
+
+        assert(result._2 === Some(Question(text(0) +"\n" +text(1) +"\n" + text(2), Some(text(4) ))))
+      }
+
+
+      it("handles when there is a multiline answer") {
+        val text = Seq[String]("myfile?",
+          "",
+          "The story of coming of age.",
+          "",
+          "nice, right!")
+
+        val result = TextToQuestionConvert.getNextQuestionItem(0, text)
+
+        assert(result._2 === Some(Question("myfile?", Some(text(2) +"\n\n" + text(4) ))))
+      }
+
       it("handles when there are no more questions") {
         val text = Seq[String]()
 
