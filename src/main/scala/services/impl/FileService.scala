@@ -25,15 +25,18 @@ class FileService(homePath: String) extends services.FileService {
   override def saveFile(name: String, newContent: String): Unit = {
     val file = new File(home.getPath + "/" + name)
 
+    val tmpFile = new File(home.getPath + "/" + name + ".tmp")
     if (file.exists()) {
-      val tmpFile = new File(home.getPath + "/" + name + ".tmp")
       file.renameTo(tmpFile)
+      file.delete()
     }
 
-    file.delete()
     val pw = new PrintWriter(file)
     pw.write(newContent)
     pw.close
+    if(tmpFile.exists()) {
+      tmpFile.delete()
+    }
   }
 
   override def openFile(name: String): Source = {
