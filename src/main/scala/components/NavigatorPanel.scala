@@ -3,7 +3,7 @@ package components
 import entities.TopicSmall
 import services.{NavigationService, Repository, RepositoryService}
 
-import scala.swing.{BorderPanel, Button}
+import scala.swing.{BorderPanel, Button, FlowPanel}
 import scala.swing.BorderPanel.Position
 import scala.swing.event.ButtonClicked
 import scalaswingcontrib.event.{TreeNodeSelected, TreePathSelected}
@@ -47,10 +47,16 @@ class NavigatorPanel (repositoryService: RepositoryService, navigationService : 
     }
   }
 
+  val buttonPanel = new FlowPanel()
+  val addTopicButton = Button("+"){}
+  val deleteTopicButton = Button("-"){}
+
+  buttonPanel.contents += addTopicButton
+  buttonPanel.contents += deleteTopicButton
 
   layout(myButton) = Position.North
   layout(tree) = Position.Center
-
+  layout(buttonPanel) = Position.South
 
 
   def initializeRepositories {

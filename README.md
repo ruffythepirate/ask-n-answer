@@ -9,8 +9,7 @@ It is possible to:
 * Resave files on save.
 * Read a directory and list all the files in there as options.
 
-1) I allow for save Hotkey combo
-2) I add + and - for Add and delete topic
+1) I add + and - for Add and delete topic
 3) I check how to package the application as a runnable for mac.
 4) I add hotkeys to focus Search, Editor and panel.
 5) I display notifications (As toast, maybe, or as a message at the bottom)
