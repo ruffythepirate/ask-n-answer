@@ -1,5 +1,8 @@
 package components
 
+import java.awt.Color
+import javax.swing.border.LineBorder
+
 import constants.AppEventConstants
 import entities.{Question, Topic, TopicSmall}
 import services.{AppEvent, AppEventService, NotificationService}
@@ -19,6 +22,12 @@ class EditorPanel(appEventService: AppEventService, notificationService: Notific
   val textArea = new TextArea()
 
   layout( textArea ) = Position.Center
+
+  background = Color.DARK_GRAY
+  textArea.background = Color.DARK_GRAY
+  textArea.foreground = Color.YELLOW
+  textArea.caret.color = Color.YELLOW
+  border = new LineBorder(Color.WHITE, 4  )
 
   private def onTopicLoaded(topicSmall: TopicSmall, topic : Topic): Unit = {
 
