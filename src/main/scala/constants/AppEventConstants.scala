@@ -7,6 +7,8 @@ object AppEventConstants extends Enumeration{
   val topicEdited = "topicEdited"
   val topicSaved = "topicSaved"
 
+  val repositoryTopicsUpdated = "repositoryTopicsUpdated"
+
   val saveCurrentTopic = "saveCurrentTopic"
   val saveAllTopics = "saveAllTopics"
 }

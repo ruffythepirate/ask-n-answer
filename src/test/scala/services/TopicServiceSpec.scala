@@ -11,16 +11,18 @@ class TopicServiceSpec extends FunSpec with BeforeAndAfter with MockitoSugar {
   var sut : impl.TopicService = _
 
   var feedbackService : services.FeedbackService = _
+  var eventService : AppEventService = _
   var repo : services.Repository = _
   var topicSmall : TopicSmall = _
 
   before {
+    eventService = mock[AppEventService]
     feedbackService = mock[FeedbackService]
     repo = mock[Repository]
 
     topicSmall = new TopicSmall("random", repo)
 
-    sut = new impl.TopicService(feedbackService)
+    sut = new impl.TopicService(feedbackService, eventService)
   }
 
   describe("TopicService") {
@@ -41,6 +43,13 @@ class TopicServiceSpec extends FunSpec with BeforeAndAfter with MockitoSugar {
         sut.createTopic(repo)
         verify(repo).save(any())
       }
+
+      it("publishes an event when a topic is created.") {
+        when(feedbackService.requestStringInput(any(), any())).thenReturn("my filename")
+        sut.createTopic(repo)
+        verify(eventService).publishEvent(any(), any())
+      }
+
     }
 
     describe("asks yes no when deleting a topic") {
@@ -48,6 +57,12 @@ class TopicServiceSpec extends FunSpec with BeforeAndAfter with MockitoSugar {
         when(feedbackService.requestYesNo(any(), any())).thenReturn(true)
         sut.deleteTopic(topicSmall)
         verify(repo).delete(topicSmall)
+      }
+
+      it("publishes an event when a topic is deleted.") {
+        when(feedbackService.requestYesNo(any(), any())).thenReturn(true)
+        sut.deleteTopic(topicSmall)
+        verify(eventService).publishEvent(any(), any())
       }
 
       it("does nothing if no") {

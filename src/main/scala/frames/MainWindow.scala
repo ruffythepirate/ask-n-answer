@@ -25,7 +25,7 @@ class MainWindow extends MainFrame {
   val repositoryService = new RepositoryService(fileService)
   val navigationService = new NavigationService(appEventService)
   val feedbackService = new FeedbackService(this)
-  val topicService = new TopicService(feedbackService)
+  val topicService = new TopicService(feedbackService, appEventService)
 
   val topMenuBar = new TopMenuBar(appEventService)
 
