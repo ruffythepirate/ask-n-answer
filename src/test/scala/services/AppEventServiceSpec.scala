@@ -1,8 +1,8 @@
 package services
 
 import constants.AppEventConstants
-import org.scalatest.{BeforeAndAfter, FunSpec}
 import org.scalatest.mock.MockitoSugar
+import org.scalatest.{BeforeAndAfter, FunSpec}
 
 class AppEventServiceSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
 

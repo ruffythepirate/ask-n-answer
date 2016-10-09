@@ -14,5 +14,7 @@ trait Repository {
 
   def save(topic : Topic) : Unit
 
+  def delete(topicSmall: TopicSmall) : Unit
+
   def name : String
 }

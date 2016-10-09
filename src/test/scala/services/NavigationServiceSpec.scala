@@ -2,9 +2,9 @@ package services
 
 import constants.AppEventConstants
 import entities.TopicSmall
+import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfter, FunSpec}
-import org.mockito.Mockito._
 
 class NavigationServiceSpec extends FunSpec with BeforeAndAfter with MockitoSugar{
 

@@ -14,6 +14,8 @@ class LocalRepository(fileService: services.FileService)(implicit ec: ExecutionC
     files.map(file => TopicSmall(file.getName, this))
   }
 
+  override def delete(topicSmall: TopicSmall): Unit = ???
+
   override def save(topic: Topic): Unit = {
 
     val questionsAsText = QuestionToStringConverter.questionsToString(topic.questions)

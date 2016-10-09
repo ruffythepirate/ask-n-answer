@@ -4,8 +4,7 @@ import entities.TopicSmall
 import org.scalatest.{BeforeAndAfter, FunSpec}
 import org.scalatest.mock.MockitoSugar
 import org.mockito.Mockito._
-import services.{NavigationService, Repository, RepositoryService}
-
+import services._
 import org.mockito.Matchers.any
 
 import scalaswingcontrib.tree.Tree
@@ -14,12 +13,17 @@ class NavigatorPanelSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
 
   var repositoryService : RepositoryService = _
   var navigationService : NavigationService = _
+  var topicService : TopicService = _
+  var feedbackService : FeedbackService = _
 
   before {
     repositoryService = mock[RepositoryService]
     when(repositoryService.getRepositories).thenReturn(Seq[Repository]())
 
     navigationService = mock[NavigationService]
+    topicService = mock[TopicService]
+    feedbackService = mock[FeedbackService]
+
   }
 
   describe("NavigatorPanel") {
@@ -90,6 +94,38 @@ class NavigatorPanelSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
         verify(navigationService).openTopic(any())
       }
     }
+
+    describe("add/remove topics") {
+      it("should do nothing if no repository is selected and add topic is clicked") {
+        val panel = createInitializedNavigatorPanel
+
+        panel.onAddTopicClicked()
+
+        verifyZeroInteractions(topicService)
+      }
+
+      it("should call topic service if a repo is selected and add topic is clicked") {
+        val panel = createInitializedNavigatorPanel
+        panel.tree.selectPaths(Tree.Path(panel.tree.model.roots(0).children(0)))
+
+        panel.onAddTopicClicked()
+        verify(topicService).createTopic(any())
+      }
+
+      it("should call the topic service if a topic is selected and remove is clicked") {
+        val panel = createInitializedNavigatorPanel
+        panel.tree.selectPaths(Tree.Path(panel.tree.model.roots(0).children(0)))
+
+        panel.onRemoveTopicClicked()
+        verify(topicService).deleteTopic(any())
+      }
+
+      it("should do nothing if no repo is selected and remove is clicked.") {
+        val panel = createInitializedNavigatorPanel
+        panel.onRemoveTopicClicked()
+        verifyZeroInteractions(topicService)
+      }
+    }
  }
 
   def createMockRepository(name : String, topics : TopicSmall*) = {
@@ -117,6 +153,6 @@ class NavigatorPanelSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
     TopicSmall(name, null)
   }
   def createNavigatorPanel = {
-     new NavigatorPanel (repositoryService, navigationService)
+     new NavigatorPanel (repositoryService, navigationService, topicService, feedbackService)
   }
 }

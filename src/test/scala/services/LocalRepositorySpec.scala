@@ -1,19 +1,17 @@
 package services
 
 import entities.TopicSmall
-import org.mockito.Mockito
+import org.mockito.Mockito._
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfter, FunSpec}
 import services.impl.LocalRepository
-import org.mockito.Mockito._
-import org.scalatest.concurrent.ScalaFutures
+import testutils.SynchronousExecutionContext
 
 import scala.io.Source
 
-class LocalRepositorySpec extends FunSpec with BeforeAndAfter with MockitoSugar with ScalaFutures {
-  import scala.concurrent.ExecutionContext.Implicits.global
+class LocalRepositorySpec extends FunSpec with BeforeAndAfter with MockitoSugar with ScalaFutures with SynchronousExecutionContext {
   import org.mockito.Matchers.any
-
   import testutils.TestData._
 
   var fileService: FileService = _

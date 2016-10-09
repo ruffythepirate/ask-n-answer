@@ -7,24 +7,17 @@ import constants.AppEventConstants
 import entities.{Question, Topic, TopicSmall}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
-
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfter, FunSpec}
 import services.impl.AppEventService
 import services.{NotificationService, Repository}
+import testutils.SynchronousExecutionContext
 
 import scala.concurrent.{ExecutionContext, Future, Promise}
 
-class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar with ScalaFutures {
+class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar with ScalaFutures with SynchronousExecutionContext {
 
-  implicit val currentThreadExecutionContext = ExecutionContext.fromExecutor(
-    new Executor {
-      // Do not do this!
-      def execute(runnable: Runnable) {
-        runnable.run()
-      }
-    })
 
   var appEventService: AppEventService = _
   var notificationService: NotificationService = _

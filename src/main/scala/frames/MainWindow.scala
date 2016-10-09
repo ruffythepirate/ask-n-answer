@@ -24,12 +24,13 @@ class MainWindow extends MainFrame {
   val appEventService = new AppEventService
   val repositoryService = new RepositoryService(fileService)
   val navigationService = new NavigationService(appEventService)
-
+  val feedbackService = new FeedbackService
+  val topicService = new TopicService(feedbackService)
 
   val topMenuBar = new TopMenuBar(appEventService)
 
   val searchPanel = new SearchPanel()
-  val navigatorPanel = new NavigatorPanel(repositoryService, navigationService)
+  val navigatorPanel = new NavigatorPanel(repositoryService, navigationService, topicService, feedbackService)
   val editorPanel = new EditorPanel(appEventService, notificationService)
 
   listenTo(editorPanel.textArea.keys)
