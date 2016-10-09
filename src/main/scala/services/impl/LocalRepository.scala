@@ -14,7 +14,9 @@ class LocalRepository(fileService: services.FileService)(implicit ec: ExecutionC
     files.map(file => TopicSmall(file.getName, this))
   }
 
-  override def delete(topicSmall: TopicSmall): Unit = ???
+  override def delete(topicSmall: TopicSmall): Unit = {
+    fileService.deleteFile(topicSmall.name)
+  }
 
   override def save(topic: Topic): Unit = {
 

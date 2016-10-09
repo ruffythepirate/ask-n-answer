@@ -60,6 +60,16 @@ class LocalRepositorySpec extends FunSpec with BeforeAndAfter with MockitoSugar 
         verify(fileService).saveFile(any(), any())
       }
     }
+
+    describe("delete") {
+      it("can delete a topic") {
+        val topicSmall = createTopicSmall
+
+        sut.delete(topicSmall)
+
+        verify(fileService).deleteFile(any())
+      }
+    }
   }
 
   def createSource(text: String): Source = {

@@ -10,6 +10,8 @@ trait FileService {
 
   def saveFile(name: String, newContent : String)
 
+  def deleteFile(name : String)
+
   def openFile(name: String) : Source
 
   def pwd : String

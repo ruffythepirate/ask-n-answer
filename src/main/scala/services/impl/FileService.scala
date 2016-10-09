@@ -18,12 +18,19 @@ class FileService(homePath: String) extends services.FileService {
     file.exists()
   }
 
+  override def deleteFile(name: String): Unit = {
+    val file: File = getFile(name)
+    if(file.exists()) {
+      file.delete()
+    }
+  }
+
   private def createPath(path: String) = {
     new File(path).mkdirs
   }
 
   override def saveFile(name: String, newContent: String): Unit = {
-    val file = new File(home.getPath + "/" + name)
+    val file: File = getFile(name)
 
     val tmpFile = new File(home.getPath + "/" + name + ".tmp")
     if (file.exists()) {
@@ -39,8 +46,13 @@ class FileService(homePath: String) extends services.FileService {
     }
   }
 
-  override def openFile(name: String): Source = {
+  private def getFile(name: String): File = {
     val file = new File(home.getPath + "/" + name)
+    file
+  }
+
+  override def openFile(name: String): Source = {
+    val file: File = getFile(name)
     Source.fromFile(file)
   }
 
