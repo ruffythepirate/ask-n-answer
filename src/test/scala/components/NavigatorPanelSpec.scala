@@ -1,5 +1,6 @@
 package components
 
+import constants.AppEventConstants
 import entities.TopicSmall
 import org.scalatest.{BeforeAndAfter, FunSpec}
 import org.scalatest.mock.MockitoSugar
@@ -15,10 +16,13 @@ class NavigatorPanelSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
   var navigationService : NavigationService = _
   var topicService : TopicService = _
   var feedbackService : FeedbackService = _
+  var eventService : impl.AppEventService = _
 
   before {
     repositoryService = mock[RepositoryService]
     when(repositoryService.getRepositories).thenReturn(Seq[Repository]())
+
+    eventService = new impl.AppEventService
 
     navigationService = mock[NavigationService]
     topicService = mock[TopicService]
@@ -30,16 +34,16 @@ class NavigatorPanelSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
 
     describe("initialization") {
       it("should initialize") {
-        val panel = createNavigatorPanel
+        val panel = createNavigationPanel
       }
 
       it("should contain a tree control") {
-        val panel = createNavigatorPanel
+        val panel = createNavigationPanel
         assert( panel.contents.filter(_.isInstanceOf[Tree[Node]]).size === 1)
       }
 
       it("should get repositories on initializeRepositories") {
-        val panel = createNavigatorPanel
+        val panel = createNavigationPanel
         panel.initializeRepositories
         verify(repositoryService).getRepositories
       }
@@ -52,7 +56,7 @@ class NavigatorPanelSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
 
         when(repositoryService.getRepositories).thenReturn(mockRepos)
 
-        val panel = createNavigatorPanel
+        val panel = createNavigationPanel
         panel.initializeRepositories
 
         assert( panel.tree.model.size === 2)
@@ -65,7 +69,7 @@ class NavigatorPanelSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
 
         when(repositoryService.getRepositories).thenReturn(mockRepos)
 
-        val panel = createNavigatorPanel
+        val panel = createNavigationPanel
         panel.initializeRepositories
 
         val firstNode = panel.tree.model.roots(0)
@@ -78,7 +82,7 @@ class NavigatorPanelSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
 
         when(repositoryService.getRepositories).thenReturn(mockRepos)
 
-        val panel = createNavigatorPanel
+        val panel = createNavigationPanel
         panel.initializeRepositories
 
         assert( panel.tree.model.filter(_ == Node("No Repositories Available", None)).size === 1)
@@ -92,6 +96,39 @@ class NavigatorPanelSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
         panel.tree.selectPaths(Tree.Path(panel.tree.model.roots(0).children(0)))
 
         verify(navigationService).openTopic(any())
+      }
+    }
+
+    describe("reacting to topic updates") {
+      it("adds a topic when one is added") {
+        val beforeEventRepos = Seq[Repository](createMockRepository("First", createTopicSmall("1.1")))
+        when(repositoryService.getRepositories).thenReturn(beforeEventRepos)
+
+        val panel = createNavigationPanel
+        panel.initializeRepositories
+        assert( panel.tree.model.size === 2)
+
+        val afterEventRepos = Seq[Repository](createMockRepository("First", createTopicSmall("1.1"), createTopicSmall("1.2")))
+        when(repositoryService.getRepositories).thenReturn(afterEventRepos)
+
+        eventService.publishEvent(AppEventConstants.repositoryTopicsUpdated)
+
+        assert( panel.tree.model.size === 3)
+      }
+
+      it("removes a topic when one is removed") {
+        val beforeEventRepos = Seq[Repository](createMockRepository("First", createTopicSmall("1.1")))
+        when(repositoryService.getRepositories).thenReturn(beforeEventRepos)
+
+        val panel = createNavigationPanel
+        panel.initializeRepositories
+        assert( panel.tree.model.size === 2)
+
+        val afterEventRepos = Seq[Repository](createMockRepository("First"))
+        when(repositoryService.getRepositories).thenReturn(afterEventRepos)
+
+        eventService.publishEvent(AppEventConstants.repositoryTopicsUpdated)
+        assert( panel.tree.model.size === 1)
       }
     }
 
@@ -144,7 +181,7 @@ class NavigatorPanelSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
 
     when(repositoryService.getRepositories).thenReturn(mockRepos)
 
-    val panel = createNavigatorPanel
+    val panel = createNavigationPanel
     panel.initializeRepositories
     panel
   }
@@ -152,7 +189,7 @@ class NavigatorPanelSpec extends FunSpec with MockitoSugar with BeforeAndAfter{
   def createTopicSmall(name : String) = {
     TopicSmall(name, null)
   }
-  def createNavigatorPanel = {
-     new NavigatorPanel (repositoryService, navigationService, topicService, feedbackService)
+  def createNavigationPanel = {
+     new NavigationPanel (repositoryService, navigationService, topicService, feedbackService, eventService)
   }
 }

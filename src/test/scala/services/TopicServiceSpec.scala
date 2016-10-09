@@ -49,7 +49,6 @@ class TopicServiceSpec extends FunSpec with BeforeAndAfter with MockitoSugar {
         sut.createTopic(repo)
         verify(eventService).publishEvent(any(), any())
       }
-
     }
 
     describe("asks yes no when deleting a topic") {

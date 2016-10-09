@@ -1,5 +1,6 @@
 package components
 
+import constants.AppEventConstants
 import entities.TopicSmall
 import services._
 
@@ -11,8 +12,8 @@ import scalaswingcontrib.tree.{Tree, TreeModel}
 
 case class Node(value: String, tag: Option[Any], children: Node*)
 
-class NavigatorPanel(repositoryService: RepositoryService, navigationService: NavigationService, topicService: TopicService,
-                     feedbackService: FeedbackService) extends BorderPanel {
+class NavigationPanel(repositoryService: RepositoryService, navigationService: NavigationService, topicService: TopicService,
+                      feedbackService: FeedbackService, eventService: AppEventService) extends BorderPanel {
 
   private var selectedNode : Option[Node] = None
 
@@ -25,18 +26,22 @@ class NavigatorPanel(repositoryService: RepositoryService, navigationService: Na
 
   tree.selection.reactions += {
     case TreeNodeSelected(node) => {
-      node match {
-        case n: Node => {
-          selectedNode = Some(n)
-          n.tag match {
-            case Some(ts: TopicSmall) =>
-              navigationService.openTopic(ts)
-            case _ =>
-          }
+      onNodeSelected(node)
+    }
+  }
+
+  def onNodeSelected(node: Any): Unit = {
+    node match {
+      case n: Node => {
+        selectedNode = Some(n)
+        n.tag match {
+          case Some(ts: TopicSmall) =>
+            navigationService.openTopic(ts)
+          case _ =>
         }
-        case _ => {
-          selectedNode = None
-        }
+      }
+      case _ => {
+        selectedNode = None
       }
     }
   }
@@ -82,6 +87,9 @@ class NavigatorPanel(repositoryService: RepositoryService, navigationService: Na
   layout(tree) = Position.Center
   layout(buttonPanel) = Position.South
 
+  eventService.subscribeToEvent(AppEventConstants.repositoryTopicsUpdated, e => {
+    initializeRepositories
+  })
 
   def initializeRepositories {
     val allRepositories = repositoryService.getRepositories
@@ -93,9 +101,7 @@ class NavigatorPanel(repositoryService: RepositoryService, navigationService: Na
       TreeModel(new Node("No Repositories Available", None))(_.children)
     }
     tree.model = treeModel
-
     tree.expandAll
-
   }
 
   private def repoToNode(repo: Repository): Node = {

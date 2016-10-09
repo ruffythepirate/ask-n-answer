@@ -8,7 +8,7 @@ import constants.AppEventConstants
 import services.impl._
 
 import scala.swing.BorderPanel.Position._
-import components.{EditorPanel, NavigatorPanel, SearchPanel, TopMenuBar}
+import components.{EditorPanel, NavigationPanel, SearchPanel, TopMenuBar}
 
 import scala.swing.event.Key.Modifier
 import scala.swing.event.{Key, KeyPressed, KeyTyped}
@@ -30,7 +30,7 @@ class MainWindow extends MainFrame {
   val topMenuBar = new TopMenuBar(appEventService)
 
   val searchPanel = new SearchPanel()
-  val navigatorPanel = new NavigatorPanel(repositoryService, navigationService, topicService, feedbackService)
+  val navigatorPanel = new NavigationPanel(repositoryService, navigationService, topicService, feedbackService, appEventService)
   val editorPanel = new EditorPanel(appEventService, notificationService)
 
   listenTo(editorPanel.textArea.keys)
