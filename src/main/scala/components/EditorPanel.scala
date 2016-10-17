@@ -1,6 +1,7 @@
 package components
 
-import java.awt.Color
+import java.awt.event.KeyEvent
+import java.awt.{Color, Toolkit}
 import javax.swing.KeyStroke
 import javax.swing.border.LineBorder
 
@@ -31,7 +32,10 @@ class EditorPanel(appEventService: AppEventService, notificationService: Notific
   border = new LineBorder(Color.WHITE, 4  )
 
   private def initializeHotKeys(): Unit = {
-    peer.getInputMap.put(KeyStroke.getKeyStroke("meta S"), "saveCurrent")
+
+
+    peer.getInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+      "saveCurrent")
 
     val saveCurrentAction = Action("saveCurrent") {
       saveCurrentTopic()

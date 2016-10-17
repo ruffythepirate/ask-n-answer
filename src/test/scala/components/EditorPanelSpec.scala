@@ -1,6 +1,7 @@
 package components
 
-import java.awt.event.ActionEvent
+import java.awt.Toolkit
+import java.awt.event.{ActionEvent, KeyEvent}
 import java.io.FileNotFoundException
 import java.util.concurrent.Executor
 import javax.swing.KeyStroke
@@ -45,7 +46,9 @@ class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar with
       it("maps command+s to save action") {
         val editor = createEditorPanel()
 
-        val metaSAction = editor.peer.getInputMap.get(KeyStroke.getKeyStroke("meta S"))
+        val keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
+
+        val metaSAction = editor.peer.getInputMap.get(keyStroke)
 
         assert(metaSAction != null)
         assert(metaSAction.toString == "saveCurrent")
