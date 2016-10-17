@@ -70,6 +70,8 @@ class EditorPanel(appEventService: AppEventService, notificationService: Notific
         val currentQuestions = TextToQuestionConvert.getQuestionsFromText(allLines)
         val topic = new Topic(smallTopic.name, currentQuestions)
         smallTopic.repo.save(topic)
+
+        notificationService.info(s"Topic ${smallTopic.name} has been saved.")
       case None =>
     }
   }
