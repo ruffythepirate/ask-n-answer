@@ -1,6 +1,7 @@
 package components
 
 import java.awt.Color
+import javax.swing.KeyStroke
 import javax.swing.border.LineBorder
 
 import constants.AppEventConstants
@@ -10,7 +11,7 @@ import utils.{QuestionToStringConverter, TextToQuestionConvert}
 
 import scala.concurrent.ExecutionContext
 import scala.swing.BorderPanel.Position
-import scala.swing.{BorderPanel, TextArea}
+import scala.swing.{Action, BorderPanel, TextArea}
 import scala.util.{Failure, Success}
 
 
@@ -29,6 +30,18 @@ class EditorPanel(appEventService: AppEventService, notificationService: Notific
   textArea.caret.color = Color.YELLOW
   border = new LineBorder(Color.WHITE, 4  )
 
+  private def initializeHotKeys(): Unit = {
+    peer.getInputMap.put(KeyStroke.getKeyStroke("meta S"), "saveCurrent")
+
+    val saveCurrentAction = Action("saveCurrent") {
+      saveCurrentTopic()
+    }
+
+    peer.getActionMap.put("saveCurrent", saveCurrentAction.peer)
+  }
+
+  initializeHotKeys()
+
   private def onTopicLoaded(topicSmall: TopicSmall, topic : Topic): Unit = {
 
     cacheCurrentTopic
@@ -45,6 +58,10 @@ class EditorPanel(appEventService: AppEventService, notificationService: Notific
   }
 
   private def onSaveTopic (appEvent : AppEvent) = {
+    saveCurrentTopic()
+  }
+
+  def saveCurrentTopic(): Unit = {
     currentTopic match {
       case Some(smallTopic) =>
         val allLines = textArea.text.split("\n")

@@ -1,7 +1,9 @@
 package components
 
+import java.awt.event.ActionEvent
 import java.io.FileNotFoundException
 import java.util.concurrent.Executor
+import javax.swing.KeyStroke
 
 import constants.AppEventConstants
 import entities.{Question, Topic, TopicSmall}
@@ -38,6 +40,24 @@ class EditorPanelSpec extends FunSpec with BeforeAndAfter with MockitoSugar with
     describe("initialization") {
       it("should initialize") {
         createEditorPanel
+      }
+
+      it("maps command+s to save action") {
+        val editor = createEditorPanel()
+
+        val metaSAction = editor.peer.getInputMap.get(KeyStroke.getKeyStroke("meta S"))
+
+        assert(metaSAction != null)
+        assert(metaSAction.toString == "saveCurrent")
+      }
+
+      it("there is a save action for saveCurrent.") {
+       val editor = createEditorPanel()
+
+        val saveAction = editor.peer.getActionMap.get("saveCurrent")
+
+       assert(saveAction != null)
+
       }
 
     }
