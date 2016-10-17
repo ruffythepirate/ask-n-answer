@@ -38,6 +38,8 @@ class EditorPanel(appEventService: AppEventService, notificationService: Notific
     }
 
     peer.getActionMap.put("saveCurrent", saveCurrentAction.peer)
+
+    notificationService.info("hotkeys initialized")
   }
 
   initializeHotKeys()
